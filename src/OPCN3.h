@@ -38,7 +38,7 @@ private:
         endTransfer();
 
         ResponseType response;
-        memcpy(&response, &dataIn, sizeof(response));
+        memcpy(&response, &dataIn, outputSize);
         response.valid = validate(initial, validator, 2);
         return response;
     };
