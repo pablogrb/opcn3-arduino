@@ -19,14 +19,22 @@ String HistogramData::toString() {
     info += "Validity: ";
     info += valid;
     info += "\n";
-    info += "Bin Counts\n";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "Bin Counts";
+    info += "\n";
     for (int i = 0; i < 24; i++) {
         info += binCounts[i];
         info += " ";
+        if (i + 1 % 10 == 0) {
+            info += "\n";
+        }
     }
     info += "\n";
-    info += "-------------------------------------------------\n";
-    info += "Time To Cross\n";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "Time To Cross";
+    info += "\n";
     info += bin1TimeToCross;
     info += " ";
     info += bin3TimeToCross;
@@ -35,39 +43,52 @@ String HistogramData::toString() {
     info += " ";
     info += bin7TimeToCross;
     info += "\n";
-
-    info += "-------------------------------------------------\n";
-    info += "Sampling Period\n";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "Sampling Period";
+    info += "\n";
     info += samplingPeriod;
     info += "\n";
-    info += "-------------------------------------------------\n";
-    info += "Sample Flow Rate\n";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "Sample Flow Rate";
+    info += "\n";
     info += sampleFlowRate;
     info += "\n";
-    info += "-------------------------------------------------\n";
-    info += "Temperature\n";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "Temperature";
+    info += "\n";
     info += temperature;
     info += "\n";
-    info += "-------------------------------------------------\n";
-    info += "Humidity\n";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "Humidity";
+    info += "\n";
     info += humidity;
     info += "\n";
-    info += "-------------------------------------------------\n";
-    info += "pm1\n";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "pm1";
+    info += "\n";
     info += pm1;
     info += "\n";
-    info += "-------------------------------------------------\n";
-    info += "pm2.5\n";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "pm2.5";
+    info += "\n";
     info += pm2_5;
     info += "\n";
-    info += "-------------------------------------------------\n";
-    info += "pm10\n";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "pm10";
+    info += "\n";
     info += pm10;
     info += "\n";
-    info += "-------------------------------------------------\n";
-
-    info += "MSLNS\n";
-
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "rCountGlitch, rCountLTOF, rCountRatio, rCountOOR, fanRevCount, laserStatus, checkSum";
+    info += "\n";
     info += rejectCountGlitch;
     info += " ";
     info += rejectCountLongTOF;
@@ -81,7 +102,7 @@ String HistogramData::toString() {
     info += laserStatus;
     info += " ";
     info += checkSum;
-    info += "\n";
+    info += "";
 
     return info;
 }

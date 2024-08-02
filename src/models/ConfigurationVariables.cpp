@@ -1,48 +1,58 @@
 #include "ConfigurationVariables.h"
 
 String ConfigurationVariables::toString() {
-    String info = "-----Configuration Variables-----\n";
-    info += "Validity: ";
+    String info = "Validity: ";
     info += valid;
     info += "\n";
-    info += "Bin Boundries ADC";
+    info += "-------------------------------------------------";
+    info += "\n";
+    info += "Bin Boundaries ADC";
     info += "\n";
     for (int i = 0; i < 25; i++) {
-        info += binBoundriesADC[i];
+        info += binBoundariesADC[i];
         info += " ";
+        if (i + 1 % 10 == 0) {
+            info += "\n";
+        }
     }
     info += "\n";
     info += "-------------------------------------------------";
     info += "\n";
-    info += "Bin Boundries Diametors";
+    info += "Bin Boundary Diameters um x 100";
     info += "\n";
     for (int i = 0; i < 25; i++) {
-        info += binBoundriesDiametor[i];
+        info += binBoundaryDiameters[i];
         info += " ";
+        if (i + 1 % 10 == 0) {
+            info += "\n";
+        }
     }
     info += "\n";
     info += "-------------------------------------------------";
     info += "\n";
-    info += "Bin Weights";
+    info += "Bin Weights %";
     info += "\n";
     for (int i = 0; i < 24; i++) {
-        info += binWeightings[i];
+        info += binWeights[i];
         info += " ";
-    }
+        if (i + 1 % 10 == 0) {
+            info += "\n";
+        }
+    } 
     info += "\n";
     info += "-------------------------------------------------";
     info += "\n";
-    info += "PM Diametors";
+    info += "PM Diameters um x 100";
     info += "\n";
-    info += pmDiametorA;
+    info += pmDiameterA;
     info += " ";
-    info += pmDiametorB;
+    info += pmDiameterB;
     info += " ";
-    info += pmDiametorC;
+    info += pmDiameterC;
     info += "\n";
     info += "-------------------------------------------------";
     info += "\n";
-    info += "PM MSLNS";
+    info += "MaxTOF SmpInt IdleInt MaxData SavePM FanOnIdle";
     info += "\n";
     info += maximumTimeOfFlight;
     info += " ";

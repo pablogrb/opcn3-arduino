@@ -2,8 +2,7 @@
 
 String DACandPowerStatus::toString()
 {
-    String info = "-----DACandPowerStatus-----\n";
-    info += "Validity: ";
+    String info = "Validity: ";
     info += valid;
     info += "\n";
     info += "Fan: ";
@@ -18,7 +17,5 @@ String DACandPowerStatus::toString()
     info += laserSwitch;
     info += ", gain and autogain toggle setting: ";
     info += gainAndAutoGainToggleSetting;
-    info += "\n";
-    info += "----------";
     return info;
 }

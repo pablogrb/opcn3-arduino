@@ -46,7 +46,7 @@ private:
 public:
     OPCN3(uint8_t pinSelect, uint32_t speedSelect = 500000);
     void begin();
-    void initialize();
+    void initialize(String logLevel = "info");
     struct DACandPowerStatus readDACandPowerStatus();
     struct FanDigitalPotShutdownState setFanDigitalPotShutdownState(bool status);
     struct LaserDigitalPotShutdownState setLaserDigitalPotShutdownState(bool status);
@@ -56,7 +56,6 @@ public:
     struct SerialNumber readSerialNumber();
     struct ConfigurationVariables readConfigurationVariables();
     bool resetHistogram();
-    String getSerialNumber();
 };
 
 

@@ -3,6 +3,58 @@
 #include <Arduino.h>
 #include <SPI.h>
 
+// class for logging to serial at different levels
+class Logger
+{
+private:
+    // log level
+    String logLevel = "info";
+public:
+    // set log level
+    void setLogLevel(String level)
+    {
+        if (level == "info" || level == "debug" || level == "error" || level == "quiet")
+        {
+            logLevel = level;
+        }
+        else
+        {
+            Serial.println("Invalid log level, defaulting to info");
+        }
+    }
+
+    // write to serial at the info, debug, and error levels
+    void info(String message)
+    {
+        if (logLevel == "info" || logLevel == "debug" || logLevel == "error")
+        {
+            Serial.println(message);
+        }
+    }
+
+    void debug(String message)
+    {
+        if (logLevel == "debug" || logLevel == "error")
+        {
+            Serial.println(message);
+        }
+    }
+
+    void error(String message)
+    {
+        if (logLevel == "error")
+        {
+            Serial.println(message);
+        }
+    }
+};
+
+// create a logger
+Logger logger;
+
+// char buffer for printing to serial
+char serialBuffer[256];
+
 OPCN3::OPCN3(uint8_t pinSelect, uint32_t speedSelect)
 {
     _ssPin = pinSelect;
@@ -12,7 +64,7 @@ OPCN3::OPCN3(uint8_t pinSelect, uint32_t speedSelect)
 // Alpha Sensor Functions
 void OPCN3::begin()
 {
-    Serial.println("Initiating SPI ");
+    logger.info("Initializing SPI ");
     // set ss pin to output
     pinMode(_ssPin, OUTPUT);
     SPI.begin();
@@ -21,35 +73,35 @@ void OPCN3::begin()
     delay(1000);
 }
 
-void OPCN3::initialize()
+void OPCN3::initialize(String logLevel)
 {
+    // set the log level
+    logger.setLogLevel(logLevel);
+    // Initialize the OPC-N3
     delay(1000);
-    Serial.println("Initilize");
+    logger.info("Initialize");
     delay(1000);
     begin();
     delay(1000);
+    logger.info("Serial Number:");
     readSerialNumber();
-    Serial.println("Serial Number:");
-    Serial.println(getSerialNumber());
     delay(1000);
-    Serial.println("DACandPowerStatus");
+    logger.info("DACandPowerStatus");
     readDACandPowerStatus();
     delay(1000);
-    Serial.println("ConfigurationVariables");
+    logger.debug("ConfigurationVariables");
     readConfigurationVariables();
-    delay(4000);
-    Serial.println("");
     delay(10000);
-    Serial.println("Turn Fan on");
+    logger.info("Turn Fan on");
     struct FanDigitalPotShutdownState fanState = setFanDigitalPotShutdownState(true);
     delay(1000);
-    Serial.println("Turn Laser on");
+    logger.info("Turn Laser on");
     struct LaserDigitalPotShutdownState laserState = setLaserDigitalPotShutdownState(true);
     delay(1000);
-    Serial.println("Turn Laser Switch on");
+    logger.info("Turn Laser Switch on");
     struct LaserPowerSwitchState laserPowerState = setLaserPowerSwitchState(true);
     delay(1000);
-    Serial.println("High Gain");
+    logger.info("High Gain");
     struct HighLowGainState gainState = setHighLowGainState(true);
     delay(2000);
     bool reset = resetHistogram();
@@ -59,7 +111,7 @@ void OPCN3::initialize()
 struct DACandPowerStatus OPCN3::readDACandPowerStatus()
 {
     DACandPowerStatus dACandPowerStatus = sendCommand<DACandPowerStatus>(0X13, 0X13, 6);
-    Serial.println(dACandPowerStatus.toString());
+    logger.info(dACandPowerStatus.toString());
     return dACandPowerStatus;
 }
 
@@ -68,10 +120,17 @@ struct FanDigitalPotShutdownState OPCN3::setFanDigitalPotShutdownState(bool stat
     byte commandByte = status ? 0X03 : 0X02;
     FanDigitalPotShutdownState fanDigitalPotShutdownState = sendCommand<FanDigitalPotShutdownState>(0X03, commandByte, 1);
     fanDigitalPotShutdownState.fanOn = status;
-    Serial.print("Validity: ");
-    Serial.println(fanDigitalPotShutdownState.valid);
-    Serial.print(fanDigitalPotShutdownState.fanOn);
-    Serial.print(" ");
+    // write the status of the fan to the fanState variable as an On/Off string
+    String fanState;
+    if (fanDigitalPotShutdownState.fanOn) {
+        fanState = String("On");
+    } else {
+        fanState = String("Off");
+    }
+    // print the validity and the status of the fan
+    sprintf(serialBuffer, "Validity: %d, Status: %s", fanDigitalPotShutdownState.valid, fanState);
+    // Serial.println(serialBuffer);
+    logger.info(serialBuffer);
     return fanDigitalPotShutdownState;
 }
 
@@ -80,10 +139,16 @@ struct LaserDigitalPotShutdownState OPCN3::setLaserDigitalPotShutdownState(bool 
     byte commandByte = status ? 0X05 : 0X04;
     LaserDigitalPotShutdownState laserDigitalPotShutdownState = sendCommand<LaserDigitalPotShutdownState>(0X03, commandByte, 1);
     laserDigitalPotShutdownState.laserOn = status;
-    Serial.print("Validity: ");
-    Serial.println(laserDigitalPotShutdownState.valid);
-    Serial.print(laserDigitalPotShutdownState.laserOn);
-    Serial.print(" ");
+    // write the status of the laser to the laserState variable as an On/Off string
+    String laserState;
+    if (laserDigitalPotShutdownState.laserOn) {
+        laserState = String("On");
+    } else {
+        laserState = String("Off");
+    }
+    // print the validity and the status of the laser
+    sprintf(serialBuffer, "Validity: %d, Status: %s", laserDigitalPotShutdownState.valid, laserState);
+    logger.info(serialBuffer);
     return laserDigitalPotShutdownState;
 }
 
@@ -92,10 +157,16 @@ struct LaserPowerSwitchState OPCN3::setLaserPowerSwitchState(bool status)
     byte commandByte = status ? 0X07 : 0X06;
     LaserPowerSwitchState laserPowerSwitchState = sendCommand<LaserPowerSwitchState>(0X03, commandByte, 1);
     laserPowerSwitchState.laserOn = status;
-    Serial.print("Validity: ");
-    Serial.println(laserPowerSwitchState.valid);
-    Serial.print(laserPowerSwitchState.laserOn);
-    Serial.print(" ");
+    // write the status of the laser swtich to the laserState variable as an On/Off string
+    String laserState;
+    if (laserPowerSwitchState.laserOn) {
+        laserState = String("On");
+    } else {
+        laserState = String("Off");
+    }
+    // print the validity and the status of the laser switch
+    sprintf(serialBuffer, "Validity: %d, Status: %s", laserPowerSwitchState.valid, laserState);
+    logger.info(serialBuffer);
     return laserPowerSwitchState;
 }
 
@@ -104,17 +175,23 @@ struct HighLowGainState OPCN3::setHighLowGainState(bool status)
     byte commandByte = status ? 0X10 : 0X11;
     HighLowGainState highLowGainState = sendCommand<HighLowGainState>(0X03, commandByte, 1);
     highLowGainState.highLow = status;
-    Serial.print("Validity: ");
-    Serial.println(highLowGainState.valid);
-    Serial.print(highLowGainState.highLow);
-    Serial.print(" ");
+    // write the status of the Gain to the laserState variable as an High/Low string
+    String gainState;
+    if (highLowGainState.highLow) {
+        gainState = String("High");
+    } else {
+        gainState = String("Low");
+    }
+    // print the validity and the status of the gain
+    sprintf(serialBuffer, "Validity: %d, Status: %s", highLowGainState.valid, gainState);
+    logger.info(serialBuffer);
     return highLowGainState;
 }
 
 struct HistogramData OPCN3::readHistogramData()
 {
     HistogramData histogramData = sendCommand<HistogramData>(0X30, 0X30, 86);
-    Serial.println(histogramData.toString());
+    logger.debug(histogramData.toString());
     return histogramData;
 }
 
@@ -127,26 +204,20 @@ bool OPCN3::resetHistogram()
 struct SerialNumber OPCN3::readSerialNumber()
 {
     SerialNumber serialNumber = sendCommand<SerialNumber>(0X10, 0X10, 60);
-    Serial.print("Validity: ");
-    Serial.println(serialNumber.valid);
-    String info = "";
+    String serialString = "";
     for (int i = 0; i < 60; i++)
     {
-        info += String(serialNumber.serial[i]);
+        serialString += String(serialNumber.serial[i]);
     }
-    serial = info;
+    sprintf(serialBuffer, "Validity: %d Serial Number: %s", serialNumber.valid, serialString.c_str());
+    logger.info(serialBuffer);
     return serialNumber;
-}
-
-String OPCN3::getSerialNumber()
-{
-    return serial;
 }
 
 struct ConfigurationVariables OPCN3::readConfigurationVariables()
 {
     ConfigurationVariables configurationVariables = sendCommand<ConfigurationVariables>(0X3C, 0X3C, 163);
-    Serial.println(configurationVariables.toString());
+    logger.debug(configurationVariables.toString());
     return configurationVariables;
 }
 
