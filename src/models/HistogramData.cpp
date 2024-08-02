@@ -21,7 +21,7 @@ String HistogramData::toString() {
     info += "\n";
     info += "-------------------------------------------------";
     info += "\n";
-    info += "Bin Counts";
+    info += "Bin Counts: counts per second in each bin";
     info += "\n";
     for (int i = 0; i < 24; i++) {
         info += binCounts[i];
