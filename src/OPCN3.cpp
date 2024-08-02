@@ -11,39 +11,29 @@ private:
     String logLevel = "info";
 public:
     // set log level
-    void setLogLevel(String level)
-    {
-        if (level == "info" || level == "debug" || level == "error" || level == "quiet")
-        {
+    void setLogLevel(String level) {
+        if (level == "info" || level == "debug" || level == "error" || level == "quiet") {
             logLevel = level;
-        }
-        else
-        {
+        } else {
             Serial.println("Invalid log level, defaulting to info");
         }
     }
 
     // write to serial at the info, debug, and error levels
-    void info(String message)
-    {
-        if (logLevel == "info" || logLevel == "debug" || logLevel == "error")
-        {
+    void info(String message) {
+        if (logLevel == "info" || logLevel == "debug" || logLevel == "error") {
             Serial.println(message);
         }
     }
 
-    void debug(String message)
-    {
-        if (logLevel == "debug" || logLevel == "error")
-        {
+    void debug(String message) {
+        if (logLevel == "debug" || logLevel == "error") {
             Serial.println(message);
         }
     }
 
-    void error(String message)
-    {
-        if (logLevel == "error")
-        {
+    void error(String message) {
+        if (logLevel == "error") {
             Serial.println(message);
         }
     }
