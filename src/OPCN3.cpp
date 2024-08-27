@@ -111,15 +111,14 @@ struct FanDigitalPotShutdownState OPCN3::setFanDigitalPotShutdownState(bool stat
     FanDigitalPotShutdownState fanDigitalPotShutdownState = sendCommand<FanDigitalPotShutdownState>(0X03, commandByte, 1);
     fanDigitalPotShutdownState.fanOn = status;
     // write the status of the fan to the fanState variable as an On/Off string
-    String fanState;
+    char fanState[3];
     if (fanDigitalPotShutdownState.fanOn) {
-        fanState = String("On");
+        sprintf(fanState, "On ");
     } else {
-        fanState = String("Off");
+        sprintf(fanState, "Off");
     }
     // print the validity and the status of the fan
     sprintf(serialBuffer, "Validity: %d, Status: %s", fanDigitalPotShutdownState.valid, fanState);
-    // Serial.println(serialBuffer);
     logger.info(serialBuffer);
     return fanDigitalPotShutdownState;
 }
@@ -130,11 +129,11 @@ struct LaserDigitalPotShutdownState OPCN3::setLaserDigitalPotShutdownState(bool 
     LaserDigitalPotShutdownState laserDigitalPotShutdownState = sendCommand<LaserDigitalPotShutdownState>(0X03, commandByte, 1);
     laserDigitalPotShutdownState.laserOn = status;
     // write the status of the laser to the laserState variable as an On/Off string
-    String laserState;
+    char laserState[3];
     if (laserDigitalPotShutdownState.laserOn) {
-        laserState = String("On");
+        sprintf(laserState, "On ");
     } else {
-        laserState = String("Off");
+        sprintf(laserState, "Off");
     }
     // print the validity and the status of the laser
     sprintf(serialBuffer, "Validity: %d, Status: %s", laserDigitalPotShutdownState.valid, laserState);
@@ -148,11 +147,11 @@ struct LaserPowerSwitchState OPCN3::setLaserPowerSwitchState(bool status)
     LaserPowerSwitchState laserPowerSwitchState = sendCommand<LaserPowerSwitchState>(0X03, commandByte, 1);
     laserPowerSwitchState.laserOn = status;
     // write the status of the laser swtich to the laserState variable as an On/Off string
-    String laserState;
+    char laserState[3];
     if (laserPowerSwitchState.laserOn) {
-        laserState = String("On");
+        sprintf(laserState, "On ");
     } else {
-        laserState = String("Off");
+        sprintf(laserState, "Off");
     }
     // print the validity and the status of the laser switch
     sprintf(serialBuffer, "Validity: %d, Status: %s", laserPowerSwitchState.valid, laserState);
@@ -166,11 +165,11 @@ struct HighLowGainState OPCN3::setHighLowGainState(bool status)
     HighLowGainState highLowGainState = sendCommand<HighLowGainState>(0X03, commandByte, 1);
     highLowGainState.highLow = status;
     // write the status of the Gain to the laserState variable as an High/Low string
-    String gainState;
+    char gainState[4];
     if (highLowGainState.highLow) {
-        gainState = String("High");
+        sprintf(gainState, "High");
     } else {
-        gainState = String("Low");
+        sprintf(gainState, "Low ");
     }
     // print the validity and the status of the gain
     sprintf(serialBuffer, "Validity: %d, Status: %s", highLowGainState.valid, gainState);
